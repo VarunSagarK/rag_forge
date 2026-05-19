@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Varun Sagar Kuppili | AI Product & Operations Strategist</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: rgba(10, 22, 40, 0.75);
+      --panel-border: rgba(93, 173, 255, 0.18);
+      --primary: #74c0fc;
+      --secondary: #7c4dff;
+      --text: #f4f7fb;
+      --muted: #9fb2c8;
+      --success: #57f287;
+      --glow: 0 0 30px rgba(116, 192, 252, 0.35);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top left, rgba(124,77,255,0.18), transparent 25%),
+                  radial-gradient(circle at bottom right, rgba(116,192,252,0.15), transparent 30%),
+                  var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    canvas {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      opacity: 0.35;
+    }
+
+    .container {
+      width: min(1200px, 92%);
+      margin: auto;
+      padding: 50px 0 80px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 28px;
+      margin-bottom: 28px;
+    }
+
+    .glass {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      backdrop-filter: blur(14px);
+      border-radius: 24px;
+      box-shadow: var(--glow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-card {
+      padding: 40px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: rgba(116, 192, 252, 0.12);
+      border: 1px solid rgba(116, 192, 252, 0.22);
+      color: var(--primary);
+      font-size: 13px;
+      margin-bottom: 24px;
+      letter-spacing: 0.4px;
+    }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      line-height: 1.05;
+      margin-bottom: 18px;
+      letter-spacing: 1px;
+    }
+
+    .gradient {
+      background: linear-gradient(90deg, #74c0fc, #b197fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .headline {
+      font-size: 1.15rem;
+      color: var(--muted);
+      line-height: 1.8;
+      max-width: 760px;
+    }
+
+    .quick-info {
+      margin-top: 28px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .pill {
+      padding: 10px 16px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .side-card {
+      padding: 34px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .radar {
+      height: 260px;
+      width: 260px;
+      border-radius: 50%;
+      margin: auto;
+      border: 1px solid rgba(116, 192, 252, 0.25);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .radar::before,
+    .radar::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(116, 192, 252, 0.12);
+    }
+
+    .radar::before {
+      width: 70%;
+      height: 70%;
+    }
+
+    .radar::after {
+      width: 40%;
+      height: 40%;
+    }
+
+    .scanner {
+      position: absolute;
+      width: 50%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #74c0fc);
+      transform-origin: left center;
+      animation: rotate 4s linear infinite;
+      box-shadow: 0 0 18px #74c0fc;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .radar-center {
+      width: 16px;
+      height: 16px;
+      background: var(--primary);
+      border-radius: 50%;
+      box-shadow: 0 0 25px var(--primary);
+      z-index: 2;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 24px;
+    }
+
+    .section {
+      padding: 30px;
+    }
+
+    .span-7 { grid-column: span 7; }
+    .span-5 { grid-column: span 5; }
+    .span-6 { grid-column: span 6; }
+    .span-12 { grid-column: span 12; }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .section-title h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+    }
+
+    .line {
+      width: 70px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary), transparent);
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 24px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 2px;
+      height: calc(100% - 10px);
+      background: linear-gradient(var(--primary), transparent);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 30px;
+      padding-bottom: 6px;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -31px;
+      top: 8px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 18px var(--primary);
+    }
+
+    .timeline-item h3 {
+      font-size: 1.05rem;
+      margin-bottom: 4px;
+    }
+
+    .timeline-item .meta {
+      color: var(--primary);
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+
+    .timeline-item p,
+    li {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.96rem;
+    }
+
+    ul {
+      margin-top: 10px;
+      padding-left: 18px;
+    }
+
+    .skills {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .skill {
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: 0.3s ease;
+    }
+
+    .skill:hover {
+      transform: translateY(-4px);
+      border-color: rgba(116, 192, 252, 0.3);
+    }
+
+    .skill strong {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .meter {
+      width: 100%;
+      height: 8px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .meter span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      animation: pulse 2s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { opacity: 0.7; }
+      to { opacity: 1; }
+    }
+
+    .project-card {
+      padding: 22px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 18px;
+      transition: 0.3s ease;
+    }
+
+    .project-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+    }
+
+    .project-card h3 {
+      margin-bottom: 10px;
+      color: var(--primary);
+    }
+
+    .project-card p {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .footer {
+      margin-top: 40px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .quote {
+      margin-top: 14px;
+      font-style: italic;
+      color: var(--primary);
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .section-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .span-7,
+      .span-5,
+      .span-6,
+      .span-12 {
+        grid-column: span 1;
+      }
+
+      .skills {
+        grid-template-columns: 1fr;
+      }
+
+      .radar {
+        width: 220px;
+        height: 220px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stars"></canvas>
+
+  <div class="container">
+
+    <section class="hero">
+      <div class="glass hero-card">
+        <div class="tag">AI • Product • Operations • Strategy</div>
+
+        <h1>
+          VARUN <span class="gradient">SAGAR</span><br>
+          KUPPILI
+        </h1>
+
+        <p class="headline">
+          Product-minded operations strategist transitioning from software engineering and concierge operations into AI-driven product management.
+          Passionate about building systems that remove repetitive life friction at scale through automation, AI agents, and deeply user-centric thinking.
+        </p>
+
+        <div class="quick-info">
+          <div class="pill">📍 Calgary, Canada</div>
+          <div class="pill">🧠 AI Product Thinking</div>
+          <div class="pill">⚙️ Scrum & Agile</div>
+          <div class="pill">☁️ AWS Experience</div>
+          <div class="pill">🤝 Cross-functional Leadership</div>
+        </div>
+      </div>
+
+      <div class="glass side-card">
+        <div class="radar">
+          <div class="scanner"></div>
+          <div class="radar-center"></div>
+        </div>
+
+        <div>
+          <div class="section-title" style="margin-bottom: 14px; margin-top: 18px;">
+            <h2>Focus Areas</h2>
+            <div class="line"></div>
+          </div>
+
+          <p class="headline" style="font-size: 0.98rem; line-height: 1.9;">
+            AI Concierge Platforms • Job Search Automation • Product Discovery • Operational Efficiency • Human-centered AI • PM Strategy • Workflow Systems
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-grid">
+
+      <section class="glass section span-7">
+        <div class="section-title">
+          <h2>Professional Experience</h2>
+          <div class="line"></div>
+        </div>
+
+        <div class="timeline">
+
+          <div class="timeline-item">
+            <h3>Head Concierge</h3>
+            <div class="meta">Centrum Concierge & Services • Canada</div>
+            <p>
+              Leading operational coordination across residential communities while identifying opportunities to reduce repetitive management effort through AI-driven systems.
+            </p>
+            <ul>
+              <li>Managed resident communications, vendor coordination, and operational workflows.</li>
+              <li>Observed recurring pain points that inspired an AI-powered concierge platform vision.</li>
+              <li>Improved issue handling through structured communication and prioritization methods.</li>
+            </ul>
+          </div>
+
+          <div class="timeline-item">
+            <h3>Software Developer</h3>
+            <div class="meta">Insurance Technology Domain • 4.5+ Years</div>
+            <p>
+              Built enterprise insurance product systems using Java and GraphTalk while working within agile delivery environments.
+            </p>
+            <ul>
+              <li>Supported policy and statement generation workflows handling large-scale transactions.</li>
+              <li>Worked with MySQL databases and monitored production systems.</li>
+              <li>Collaborated with cross-functional teams following Scrum practices.</li>
+            </ul>
+          </div>
+
+        </div>
+      </section>
+
+      <section class="glass section span-5">
+        <div class="section-title">
+          <h2>Core Skills</h2>
+          <div class="line"></div>
+        </div>
+
+        <div class="skills">
+          <div class="skill">
+            <strong>Product Strategy</strong>
+            <div class="meter"><span style="width:92%"></span></div>
+          </div>
+
+          <div class="skill">
+            <strong>AI Workflow Thinking</strong>
+            <div class="meter"><span style="width:94%"></span></div>
+          </div>
+
+          <div class="skill">
+            <strong>Agile & Scrum</strong>
+            <div class="meter"><span style="width:90%"></span></div>
+          </div>
+
+          <div class="skill">
+            <strong>Stakeholder Management</strong>
+            <div class="meter"><span style="width:88%"></span></div>
+          </div>
+
+          <div class="skill">
+            <strong>AWS & Cloud Exposure</strong>
+            <div class="meter"><span style="width:74%"></span></div>
+          </div>
+
+          <div class="skill">
+            <strong>Frontend Curiosity</strong>
+            <div class="meter"><span style="width:70%"></span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="glass section span-6">
+        <div class="section-title">
+          <h2>Vision Projects</h2>
+          <div class="line"></div>
+        </div>
+
+        <div class="project-card">
+          <h3>AI Concierge Platform</h3>
+          <p>
+            Designing an AI-powered ecosystem for residential and commercial buildings that automates package handling, visitor management, maintenance coordination, amenity booking, resident communication, and building navigation support.
+          </p>
+        </div>
+
+        <div class="project-card">
+          <h3>WorldInAMinuteGPT</h3>
+          <p>
+            AI agent focused on delivering only the most essential global updates in under a minute while encouraging digital detox and intentional information consumption.
+          </p>
+        </div>
+
+        <div class="project-card">
+          <h3>Job Search Automation System</h3>
+          <p>
+            Building an intelligent workflow that tailors resumes, identifies hiring contacts, automates follow-ups, tracks applications, and improves candidate visibility.
+          </p>
+        </div>
+      </section>
+
+      <section class="glass section span-6">
+        <div class="section-title">
+          <h2>Career Direction</h2>
+          <div class="line"></div>
+        </div>
+
+        <div class="timeline">
+          <div class="timeline-item">
+            <h3>Transitioning Into Product Leadership</h3>
+            <p>
+              Expanding from software delivery into product discovery, systems thinking, and user-first innovation.
+            </p>
+          </div>
+
+          <div class="timeline-item">
+            <h3>AI for Everyday Friction</h3>
+            <p>
+              Exploring practical AI products that reduce repetitive operational pain points across hiring, property management, communication, and personal productivity.
+            </p>
+          </div>
+
+          <div class="timeline-item">
+            <h3>Continuous Learning</h3>
+            <p>
+              Deep-diving into Scrum mastery, product management, RAG systems, AI agents, and scalable workflow design.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="glass section span-12">
+        <div class="section-title">
+          <h2>Personal Philosophy</h2>
+          <div class="line"></div>
+        </div>
+
+        <p class="headline" style="max-width: 100%;">
+          Building systems that quietly remove human frustration is one of the most underrated forms of innovation.
+          The future belongs to people who can combine empathy, operational understanding, AI leverage, and strategic execution.
+        </p>
+
+        <div class="quote">
+          “Take care of your health — it’s your real capital. Then build what lifts others too.”
+        </div>
+      </section>
+
+    </div>
+
+    <div class="footer">
+      Designed as a futuristic single-file resume • HTML + CSS + JavaScript
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('stars');
+    const ctx = canvas.getContext('2d');
+
+    let stars = [];
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    resize();
+    window.addEventListener('resize', resize);
+
+    class Star {
+      constructor() {
+        this.reset();
+      }
+
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.radius = Math.random() * 1.5;
+        this.speed = Math.random() * 0.5 + 0.1;
+        this.opacity = Math.random();
+      }
+
+      update() {
+        this.y += this.speed;
+
+        if (this.y > canvas.height) {
+          this.y = 0;
+          this.x = Math.random() * canvas.width;
+        }
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(116, 192, 252, ${this.opacity})`;
+        ctx.fill();
+      }
+    }
+
+    function init() {
+      stars = [];
+      for (let i = 0; i < 180; i++) {
+        stars.push(new Star());
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      stars.forEach(star => {
+        star.update();
+        star.draw();
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    init();
+    animate();
+
+    document.querySelectorAll('.glass').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        card.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(116,192,252,0.12), rgba(10,22,40,0.75))`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.background = 'rgba(10, 22, 40, 0.75)';
+      });
+    });
+  </script>
+</body>
+</html>
