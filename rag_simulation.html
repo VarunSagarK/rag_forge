@@ -3,159 +3,175 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>RAG System Simulator</title>
+<title>RAG Simulator - ChatGPT Style</title>
 
 <style>
 :root{
-  --bg:#0b1220;
-  --panel:#0f1a2e;
-  --card:#111c33;
-  --muted:#93a4b8;
-  --text:#e8eefc;
-  --accent:#6ee7ff;
-  --accent2:#8b5cf6;
-  --good:#34d399;
-  --warn:#fbbf24;
+  --bg:#0b0f17;
+  --panel:#111827;
+  --card:#0f172a;
+  --muted:#94a3b8;
+  --text:#e5e7eb;
+  --accent:#4f46e5;
+  --accent2:#06b6d4;
+  --good:#22c55e;
+  --warn:#f59e0b;
 }
 
 *{
+  margin:0;
+  padding:0;
   box-sizing:border-box;
-  font-family: Inter, system-ui, Arial;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto;
 }
 
 body{
-  margin:0;
-  background: radial-gradient(circle at top, #111c33, var(--bg));
+  background:var(--bg);
   color:var(--text);
+  height:100vh;
+  overflow:hidden;
 }
 
-header{
-  padding:30px 40px 10px;
-}
-
-h1{
-  margin:0;
-  font-size:34px;
-  background:linear-gradient(90deg,var(--accent),var(--accent2));
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-
-.sub{
-  color:var(--muted);
-  max-width:900px;
-  line-height:1.5;
-  margin-top:10px;
-}
-
-.container{
+/* LAYOUT */
+.wrapper{
   display:grid;
-  grid-template-columns:320px 1fr;
-  gap:20px;
-  padding:20px 40px 40px;
+  grid-template-columns: 280px 1fr 420px;
+  height:100vh;
 }
 
-/* LEFT STEP PANEL */
-.steps{
-  background:rgba(17,28,51,0.7);
-  border:1px solid rgba(255,255,255,0.08);
-  border-radius:18px;
-  padding:18px;
-  backdrop-filter: blur(12px);
-  height:fit-content;
+/* LEFT: STEPS */
+.sidebar{
+  background:#0c1220;
+  border-right:1px solid rgba(255,255,255,0.06);
+  padding:20px;
+  overflow:auto;
 }
 
-.step{
+.title{
+  font-size:16px;
+  font-weight:600;
+  margin-bottom:15px;
+  color:#cbd5e1;
+}
+
+.stepCard{
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.05);
   padding:12px;
   border-radius:12px;
   margin-bottom:10px;
-  border:1px solid rgba(255,255,255,0.06);
   color:var(--muted);
+  transition:0.3s;
 }
 
-.step.active{
-  background:linear-gradient(90deg,rgba(110,231,255,0.15),rgba(139,92,246,0.15));
-  border:1px solid rgba(110,231,255,0.3);
+.stepCard.active{
+  background:linear-gradient(90deg, rgba(79,70,229,0.2), rgba(6,182,212,0.15));
+  border:1px solid rgba(79,70,229,0.5);
   color:var(--text);
 }
 
-/* MAIN */
-.main{
-  display:grid;
-  grid-template-rows:auto auto;
-  gap:20px;
+/* CENTER CHAT */
+.chat{
+  display:flex;
+  flex-direction:column;
+  background:var(--bg);
 }
 
-.card{
-  background:rgba(17,28,51,0.7);
-  border:1px solid rgba(255,255,255,0.08);
-  border-radius:18px;
-  padding:18px;
-  backdrop-filter: blur(12px);
+.chatHeader{
+  padding:16px 20px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  font-weight:600;
 }
 
-label{
-  font-size:13px;
-  color:var(--muted);
-  display:block;
-  margin-bottom:6px;
+.chatBody{
+  flex:1;
+  padding:20px;
+  overflow:auto;
 }
 
-input, textarea{
-  width:100%;
-  background:#0b1324;
-  border:1px solid rgba(255,255,255,0.12);
-  color:var(--text);
-  border-radius:12px;
-  padding:12px;
+.message{
+  background:rgba(255,255,255,0.04);
+  padding:14px;
+  border-radius:14px;
   margin-bottom:12px;
-  outline:none;
+  border:1px solid rgba(255,255,255,0.05);
+  line-height:1.5;
 }
 
-textarea{
-  min-height:140px;
-  resize:vertical;
+.message.user{
+  background:rgba(79,70,229,0.15);
 }
 
-.row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
+.message.system{
+  background:rgba(6,182,212,0.10);
+}
+
+/* INPUT */
+.inputArea{
+  padding:14px;
+  border-top:1px solid rgba(255,255,255,0.06);
+  display:flex;
   gap:10px;
 }
 
+textarea{
+  flex:1;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.1);
+  background:#0b1220;
+  color:white;
+  resize:none;
+}
+
 button{
-  width:100%;
-  padding:12px;
+  padding:10px 14px;
   border:none;
-  border-radius:12px;
-  background:linear-gradient(90deg,var(--accent),var(--accent2));
-  color:#06101f;
+  border-radius:10px;
   font-weight:600;
   cursor:pointer;
   transition:0.2s;
 }
 
-button:hover{
-  transform:translateY(-2px);
+.btnBlue{ background:linear-gradient(90deg,var(--accent),var(--accent2)); color:white; }
+.btnGreen{ background:linear-gradient(90deg,#22c55e,#16a34a); color:white; }
+.btnOrange{ background:linear-gradient(90deg,#f59e0b,#f97316); color:white; }
+
+button:hover{ transform:translateY(-2px); }
+
+/* RIGHT PANEL */
+.right{
+  background:#0c1220;
+  border-left:1px solid rgba(255,255,255,0.06);
+  padding:16px;
+  overflow:auto;
 }
 
-.output{
-  line-height:1.6;
+.card{
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:12px;
 }
 
-.block{
-  background:rgba(0,0,0,0.25);
-  border:1px solid rgba(255,255,255,0.08);
-  padding:12px;
-  border-radius:12px;
-  margin-top:10px;
+.card h3{
+  font-size:14px;
+  margin-bottom:8px;
+  color:#cbd5e1;
+}
+
+.small{
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.4;
 }
 
 .chunk{
-  border-left:3px solid var(--accent);
+  margin-top:8px;
   padding:10px;
-  margin-top:10px;
-  background:rgba(0,0,0,0.2);
+  border-left:3px solid var(--accent);
+  background:rgba(255,255,255,0.03);
   border-radius:10px;
 }
 
@@ -163,22 +179,13 @@ button:hover{
   border-left-color:var(--good);
 }
 
-.small{
-  font-size:13px;
-  color:var(--muted);
-}
-
-hr{
-  border:0;
-  border-top:1px solid rgba(255,255,255,0.08);
-  margin:15px 0;
-}
-
-.filebox{
-  border:1px dashed rgba(255,255,255,0.2);
-  padding:10px;
-  border-radius:12px;
-  margin-bottom:12px;
+.badge{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:999px;
+  font-size:11px;
+  background:rgba(255,255,255,0.06);
+  margin-top:6px;
 }
 
 </style>
@@ -186,118 +193,92 @@ hr{
 
 <body>
 
-<header>
-  <h1>Retrieval Augmented Generation (RAG) Simulator</h1>
-  <div class="sub">
-    A structured visualization of how modern AI systems retrieve knowledge, construct context, and generate grounded responses using vector databases.
+<div class="wrapper">
+
+  <!-- LEFT PIPELINE -->
+  <div class="sidebar">
+    <div class="title">RAG Pipeline State</div>
+
+    <div class="stepCard active" id="s1">1. Knowledge Ingestion</div>
+    <div class="stepCard" id="s2">2. Chunking + Embeddings</div>
+    <div class="stepCard" id="s3">3. Vector Database Creation</div>
+    <div class="stepCard" id="s4">4. Query Embedding</div>
+    <div class="stepCard" id="s5">5. Semantic Retrieval</div>
+    <div class="stepCard" id="s6">6. Prompt + LLM Response</div>
+
+    <div class="small" style="margin-top:20px;">
+      Each step reflects how a production RAG system processes data internally.
+    </div>
   </div>
-</header>
 
-<div class="container">
+  <!-- CENTER CHAT -->
+  <div class="chat">
 
-  <!-- STEPS -->
-  <div class="steps">
-    <div class="step active" id="s1">Step 1: Knowledge Ingestion</div>
-    <div class="step" id="s2">Step 2: Chunking + Embedding</div>
-    <div class="step" id="s3">Step 3: Execution (User Query)</div>
-    <div class="step" id="s4">Step 4: Retrieval (Vector Search)</div>
-    <div class="step" id="s5">Step 5: Prompt Augmentation</div>
-    <div class="step" id="s6">Step 6: LLM Generation</div>
-  </div>
+    <div class="chatHeader">
+      RAG Simulator (ChatGPT-style system visualization)
+    </div>
 
-  <!-- MAIN -->
-  <div class="main">
+    <div class="chatBody" id="chat">
 
-    <!-- INPUT -->
-    <div class="card">
-
-      <h3>Step 1 — Provide Knowledge Source</h3>
-      <div class="small">Upload a document or paste text. This simulates ingestion into a RAG system.</div>
-
-      <div class="filebox">
-        <label>Upload Document (.txt supported)</label>
-        <input type="file" id="fileInput"/>
+      <div class="message system">
+        Upload knowledge or paste context to begin RAG pipeline simulation.
       </div>
 
-      <label>Or paste context manually</label>
-      <textarea id="context">
-RAG improves LLMs by retrieving external knowledge from vector databases.
+    </div>
 
-Documents are split into chunks, embedded into vectors, and stored.
+    <div class="inputArea">
+      <textarea id="query" rows="2">How does semantic search work in RAG?</textarea>
+      <button class="btnBlue" onclick="runQuery()">Run Query</button>
+    </div>
 
-At query time, semantic search retrieves the most relevant chunks.
+  </div>
 
-These chunks are added to the prompt for grounded responses.
+  <!-- RIGHT SYSTEM PANEL -->
+  <div class="right">
+
+    <div class="card">
+      <h3>Knowledge Input</h3>
+
+      <textarea id="context" style="width:100%;height:120px;background:#0b1220;color:white;border-radius:10px;border:1px solid rgba(255,255,255,0.1);padding:10px;">
+RAG improves LLMs by retrieving external knowledge.
+
+Documents are chunked and embedded into vectors.
+
+Vector DB enables semantic similarity search.
+
+Retrieved chunks are used for prompt augmentation.
       </textarea>
 
-      <div class="row">
-        <div>
-          <label>Chunk Size (characters)</label>
-          <input type="number" id="chunkSize" value="120"/>
-        </div>
-        <div>
-          <label>Overlap (characters)</label>
-          <input type="number" id="overlap" value="30"/>
-        </div>
+      <button class="btnGreen" onclick="buildDB()" style="width:100%;margin-top:8px;">
+        Generate Vector Database
+      </button>
+
+      <div class="small" style="margin-top:8px;">
+        Converts raw text into indexed vector knowledge base.
       </div>
-
-      <button onclick="buildDB()">Generate Vector Database</button>
-
     </div>
 
-    <!-- QUERY -->
-    <div class="card">
-
-      <h3>Step 3 — Execution (User Query)</h3>
-      <div class="small">Ask a question based on the ingested knowledge base.</div>
-
-      <label>User Query</label>
-      <textarea id="query">How does semantic search retrieve relevant context?</textarea>
-
-      <button onclick="runQuery()">Run RAG Pipeline</button>
-
-    </div>
-
-    <!-- OUTPUT -->
-    <div class="card output" id="output">
-
-      <div class="small">
-        Waiting for ingestion to begin RAG simulation...
-      </div>
-
-    </div>
+    <div id="debug"></div>
 
   </div>
+
 </div>
 
 <script>
 
 let db = [];
+let vectorReady = false;
 
-document.getElementById("fileInput").addEventListener("change", function(e){
-  const file = e.target.files[0];
-  if(!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function(evt){
-    document.getElementById("context").value = evt.target.result;
-  };
-  reader.readAsText(file);
-});
-
-function chunk(text,size,overlap){
-  let res=[];
-  let i=0;
-  while(i<text.length){
-    res.push(text.slice(i,i+size));
-    i += size - overlap;
+function setStep(n){
+  for(let i=1;i<=6;i++){
+    document.getElementById("s"+i).classList.remove("active");
   }
-  return res;
+  document.getElementById("s"+n).classList.add("active");
 }
 
 function embed(text){
   return Array.from({length:6},(_,i)=>
-    ((text.charCodeAt(i%text.length)||1)*(i+7))%97/97
+    ((text.charCodeAt(i%text.length)||1)*(i+9))%97/97
   );
 }
 
@@ -309,11 +290,13 @@ function similarity(a,b){
   return s.toFixed(2);
 }
 
-function setStep(n){
-  for(let i=1;i<=6;i++){
-    document.getElementById("s"+i).classList.remove("active");
+function chunk(text,size=120){
+  let res=[],i=0;
+  while(i<text.length){
+    res.push(text.slice(i,i+size));
+    i+=size;
   }
-  document.getElementById("s"+n).classList.add("active");
+  return res;
 }
 
 function buildDB(){
@@ -321,36 +304,45 @@ function buildDB(){
   setStep(2);
 
   const text = document.getElementById("context").value;
-  const size = +document.getElementById("chunkSize").value;
-  const overlap = +document.getElementById("overlap").value;
-
-  const chunks = chunk(text,size,overlap);
+  const chunks = chunk(text,120);
 
   db = chunks.map((c,i)=>({
     id:i+1,
     text:c,
-    vector:embed(c)
+    vec:embed(c)
   }));
 
-  document.getElementById("output").innerHTML = `
-    <h3>Step 2 — Chunking + Embedding Complete</h3>
-    <div class="small">Document has been transformed into vector representations and stored in the vector database.</div>
-    <div class="block">Total Chunks: ${db.length}</div>
-  `;
+  vectorReady = true;
+
+  setStep(3);
+
+  addMessage("system",
+    "Vector Knowledge Base Generated.\nChunks indexed into embeddings and stored in vector database."
+  );
+
+  addRightCard("Vector DB Created",
+    "Your document is now converted into embeddings and stored for retrieval.",
+    "Total chunks: " + db.length
+  );
 }
 
 function runQuery(){
 
-  setStep(3);
-
-  const q = document.getElementById("query").value;
-  const qVec = embed(q);
+  if(!vectorReady){
+    alert("Generate Vector Database first");
+    return;
+  }
 
   setStep(4);
 
+  const q = document.getElementById("query").value;
+  const qv = embed(q);
+
+  addMessage("user", q);
+
   let scored = db.map(d=>({
     ...d,
-    score:similarity(qVec,d.vector)
+    score: similarity(qv,d.vec)
   })).sort((a,b)=>b.score-a.score).slice(0,2);
 
   setStep(5);
@@ -359,34 +351,41 @@ function runQuery(){
 
   setStep(6);
 
-  document.getElementById("output").innerHTML = `
+  addMessage("system",
+    "Retrieving most relevant chunks using vector similarity search..."
+  );
 
-    <h3>Step 4 — Retrieved Context</h3>
-    ${scored.map(s=>`
-      <div class="chunk good">
-        <b>Chunk ${s.id}</b><br/>
-        ${s.text}<br/>
-        <span class="small">Similarity: ${s.score}</span>
-      </div>
-    `).join("")}
+  addRightCard("Retrieved Context",
+    "",
+    scored.map(s=>`Chunk ${s.id} → Score ${s.score}\n${s.text}`).join("\n\n")
+  );
 
-    <hr/>
+  addMessage("system",
+`Prompt Augmentation:
+User query + retrieved context combined before LLM call.
+`
+  );
 
-    <h3>Step 5 — Prompt Augmentation</h3>
-    <div class="block">
-SYSTEM: Answer only using provided context<br><br>
-USER: ${q}<br><br>
-CONTEXT:<br>${context}
-    </div>
+  addMessage("system","YOUR RESPONSE:\n\n" +
+`Based on retrieved knowledge, semantic search converts queries and documents into embeddings. Similarity between vectors determines relevance, enabling retrieval of contextually similar chunks which are then passed to the LLM for grounded response generation.`);
+}
 
-    <hr/>
+function addMessage(type,text){
+  const div = document.createElement("div");
+  div.className = "message " + type;
+  div.innerText = text;
+  document.getElementById("chat").appendChild(div);
+}
 
-    <h3>Step 6 — LLM Response</h3>
-    <div class="block">
-Based on retrieved context, semantic search converts both query and documents into vectors and finds nearest matches using similarity scoring. These chunks are injected into the prompt, enabling grounded responses instead of hallucinations.
-    </div>
-
+function addRightCard(title,sub,content){
+  const div = document.createElement("div");
+  div.className = "card";
+  div.innerHTML = `
+    <h3>${title}</h3>
+    <div class="small">${sub}</div>
+    <div class="chunk">${content}</div>
   `;
+  document.getElementById("debug").appendChild(div);
 }
 
 </script>
