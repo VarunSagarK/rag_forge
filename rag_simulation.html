@@ -3,354 +3,298 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>RAG Simulator</title>
+<title>RAG Simulator Dashboard</title>
 
 <style>
-:root{
-  --bg:#0b0f14;
-  --panel:#111827;
-  --card:#0f172a;
-  --text:#e5e7eb;
-  --muted:#9ca3af;
-  --blue:#3b82f6;
-  --green:#22c55e;
-  --orange:#f59e0b;
-  --border:rgba(255,255,255,0.08);
-}
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
+    }
 
-*{
-  box-sizing:border-box;
-  font-family:system-ui;
-}
+    body {
+        height: 100vh;
+        display: flex;
+        background: #0b0f19;
+        color: white;
+        overflow: hidden;
+    }
 
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-}
+    /* LEFT PANEL */
+    .left {
+        width: 22%;
+        background: #111827;
+        padding: 15px;
+        border-right: 1px solid #222;
+    }
 
-/* LAYOUT */
-.wrapper{
-  display:grid;
-  grid-template-columns:280px 1fr 420px;
-  height:100vh;
-}
+    .step {
+        padding: 10px;
+        margin: 8px 0;
+        background: #1f2937;
+        border-radius: 10px;
+        font-size: 13px;
+        opacity: 0.6;
+        transition: 0.3s;
+    }
 
-/* LEFT PIPELINE */
-.left{
-  padding:16px;
-  border-right:1px solid var(--border);
-}
+    .step.active {
+        background: #2563eb;
+        opacity: 1;
+    }
 
-.step{
-  padding:12px;
-  margin-bottom:10px;
-  border-radius:10px;
-  border:1px solid var(--border);
-  color:var(--muted);
-  background:rgba(255,255,255,0.02);
-}
+    .chunk-box {
+        margin-top: 15px;
+        font-size: 12px;
+        background: #0f172a;
+        padding: 10px;
+        border-radius: 10px;
+        height: 40%;
+        overflow: auto;
+    }
 
-.step.active{
-  border-color:var(--blue);
-  color:white;
-}
+    /* MIDDLE PANEL */
+    .middle {
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid #222;
+    }
 
-/* CENTER CHAT */
-.center{
-  display:flex;
-  flex-direction:column;
-}
+    .chat-header {
+        padding: 15px;
+        border-bottom: 1px solid #222;
+        font-weight: bold;
+    }
 
-.header{
-  padding:14px;
-  border-bottom:1px solid var(--border);
-  font-weight:600;
-}
+    .chat-box {
+        flex: 1;
+        padding: 15px;
+        overflow: hidden;
+    }
 
-.chat{
-  flex:1;
-  padding:16px;
-  overflow:auto;
-}
+    .msg {
+        padding: 12px;
+        margin: 10px 0;
+        border-radius: 12px;
+        font-size: 13px;
+        line-height: 1.4;
+    }
 
-.msg{
-  padding:12px;
-  border-radius:10px;
-  margin-bottom:10px;
-  border:1px solid var(--border);
-  white-space:pre-wrap;
-}
+    .user {
+        background: #1d4ed8;
+        align-self: flex-end;
+    }
 
-.user{ background:rgba(59,130,246,0.12); }
-.system{ background:rgba(255,255,255,0.03); }
+    .bot {
+        background: #1f2937;
+    }
 
-.input{
-  display:flex;
-  gap:10px;
-  padding:12px;
-  border-top:1px solid var(--border);
-}
+    .input-bar {
+        display: flex;
+        padding: 10px;
+        border-top: 1px solid #222;
+    }
 
-textarea{
-  flex:1;
-  resize:none;
-  padding:10px;
-  border-radius:8px;
-  border:1px solid var(--border);
-  background:#0b1220;
-  color:white;
-}
+    input {
+        flex: 1;
+        padding: 10px;
+        border-radius: 10px;
+        border: none;
+        outline: none;
+    }
 
-/* BUTTONS */
-button{
-  border:none;
-  padding:10px 14px;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:600;
-}
+    button {
+        margin-left: 10px;
+        padding: 10px 15px;
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+    }
 
-.btn-blue{ background:var(--blue); color:white; }
-.btn-green{ background:var(--green); color:white; }
-.btn-orange{ background:var(--orange); color:black; }
+    button:disabled {
+        background: gray;
+        cursor: not-allowed;
+    }
 
-/* RIGHT PANEL */
-.right{
-  padding:16px;
-  border-left:1px solid var(--border);
-  overflow:auto;
-}
+    /* RIGHT PANEL */
+    .right {
+        width: 28%;
+        padding: 15px;
+        background: #111827;
+    }
 
-.card{
-  background:rgba(255,255,255,0.02);
-  border:1px solid var(--border);
-  padding:12px;
-  border-radius:10px;
-  margin-bottom:10px;
-}
+    textarea {
+        width: 100%;
+        height: 120px;
+        margin-top: 10px;
+        background: #0f172a;
+        color: white;
+        border: 1px solid #333;
+        border-radius: 10px;
+        padding: 10px;
+    }
 
-label{
-  font-size:12px;
-  color:var(--muted);
-}
+    .controls {
+        margin-top: 10px;
+    }
 
-input{
-  width:100%;
-  padding:8px;
-  margin:6px 0 10px;
-  border-radius:8px;
-  border:1px solid var(--border);
-  background:#0b1220;
-  color:white;
-}
+    select, input[type="number"] {
+        width: 100%;
+        margin-top: 8px;
+        padding: 8px;
+        border-radius: 8px;
+        border: none;
+    }
 
-.chunk{
-  padding:10px;
-  border-left:3px solid var(--blue);
-  margin-top:8px;
-  background:rgba(255,255,255,0.02);
-}
+    .kb-status {
+        margin-top: 10px;
+        padding: 10px;
+        background: #1f2937;
+        border-radius: 10px;
+        font-size: 12px;
+    }
 
-.final{
-  border-left:3px solid var(--green);
-}
 </style>
 </head>
 
 <body>
 
-<div class="wrapper">
+<!-- LEFT PANEL -->
+<div class="left">
+    <h3>RAG Flow</h3>
 
-  <!-- LEFT -->
-  <div class="left">
-    <div class="step active" id="s1">1. Ingestion</div>
-    <div class="step" id="s2">2. Chunking + Embeddings</div>
-    <div class="step" id="s3">3. Vector DB Creation</div>
-    <div class="step" id="s4">4. Retrieval</div>
-    <div class="step" id="s5">5. Prompt Augmentation</div>
-    <div class="step" id="s6">6. LLM Response</div>
-  </div>
+    <div id="step1" class="step active">1. Input Received</div>
+    <div id="step2" class="step">2. Chunking</div>
+    <div id="step3" class="step">3. Embeddings</div>
+    <div id="step4" class="step">4. Vector Store</div>
+    <div id="step5" class="step">5. Retrieval</div>
+    <div id="step6" class="step">6. LLM Generation</div>
 
-  <!-- CENTER -->
-  <div class="center">
+    <div class="chunk-box" id="chunkBox">
+        Chunks will appear here...
+    </div>
+</div>
 
-    <div class="header">RAG Simulator (ChatGPT-style UX)</div>
+<!-- MIDDLE PANEL -->
+<div class="middle">
+    <div class="chat-header">RAG Simulator Chat</div>
 
-    <div class="chat" id="chat">
-      <div class="msg system">
-        Upload context, configure chunking, and run a query to simulate a RAG system.
-      </div>
+    <div class="chat-box" id="chatBox"></div>
+
+    <div class="input-bar">
+        <input id="userInput" placeholder="Ask something..." disabled />
+        <button id="sendBtn" onclick="ask()" disabled>Send</button>
+    </div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="right">
+    <h3>Knowledge Builder</h3>
+
+    <textarea id="docInput" placeholder="Paste your context here..."></textarea>
+
+    <div class="controls">
+        <label>Chunk Size</label>
+        <input type="number" id="chunkSize" value="100" />
+
+        <label>Overlap</label>
+        <input type="number" id="overlap" value="20" />
     </div>
 
-    <div class="input">
-      <textarea id="query">How does semantic search work?</textarea>
-      <button class="btn-blue" onclick="runQuery()">Run</button>
+    <button onclick="buildKB()">Generate Vector Knowledge Base</button>
+
+    <div class="kb-status" id="kbStatus">
+        KB not created yet
     </div>
-
-  </div>
-
-  <!-- RIGHT -->
-  <div class="right">
-
-    <div class="card">
-      <b>Step 1: Knowledge Input</b>
-
-      <label>Context (Document)</label>
-      <textarea id="context" style="width:100%;height:120px;background:#0b1220;color:white;border-radius:8px;border:1px solid var(--border);padding:8px;">
-RAG improves LLMs by retrieving external knowledge.
-
-Documents are chunked and embedded.
-
-Vector DB enables semantic search.
-
-Retrieved chunks are injected into prompts.
-      </textarea>
-
-      <label>Chunk Size</label>
-      <input id="chunkSize" value="120"/>
-
-      <label>Overlap</label>
-      <input id="overlap" value="20"/>
-
-      <button class="btn-green" onclick="buildDB()">
-        Generate Vector Knowledge Base
-      </button>
-    </div>
-
-    <div id="rightPanel"></div>
-
-  </div>
-
 </div>
 
 <script>
+let KB = null;
 
-let db = [];
-let ready = false;
-
-function setStep(n){
-  for(let i=1;i<=6;i++){
-    document.getElementById("s"+i).classList.remove("active");
-  }
-  document.getElementById("s"+n).classList.add("active");
+function updateStep(step) {
+    for (let i = 1; i <= 6; i++) {
+        document.getElementById("step" + i).classList.remove("active");
+    }
+    document.getElementById("step" + step).classList.add("active");
 }
 
-function embed(t){
-  return Array.from({length:6},(_,i)=>
-    ((t.charCodeAt(i%t.length)||1)*(i+5))%97/97
-  );
+function buildKB() {
+    const text = document.getElementById("docInput").value;
+    const size = parseInt(document.getElementById("chunkSize").value);
+    const overlap = parseInt(document.getElementById("overlap").value);
+
+    if (!text) return alert("Add context first!");
+
+    updateStep(2);
+
+    let chunks = [];
+    for (let i = 0; i < text.length; i += (size - overlap)) {
+        chunks.push(text.slice(i, i + size));
+    }
+
+    KB = chunks.map((c, i) => ({
+        id: i,
+        text: c,
+        vector: Math.random()
+    }));
+
+    document.getElementById("chunkBox").innerHTML =
+        KB.map(k => `<div>Chunk ${k.id}: ${k.text}</div>`).join("");
+
+    updateStep(3);
+
+    setTimeout(() => updateStep(4), 500);
+
+    document.getElementById("kbStatus").innerText =
+        `KB Created | Chunks: ${KB.length}`;
+
+    document.getElementById("userInput").disabled = false;
+    document.getElementById("sendBtn").disabled = false;
 }
 
-function chunk(text,size){
-  let arr=[],i=0;
-  while(i<text.length){
-    arr.push(text.slice(i,i+size));
-    i+=size;
-  }
-  return arr;
+function ask() {
+    const input = document.getElementById("userInput").value;
+    if (!input) return;
+
+    addMsg(input, "user");
+    document.getElementById("userInput").value = "";
+
+    updateStep(5);
+
+    // fake retrieval
+    let topChunks = KB.slice(0, 2);
+
+    setTimeout(() => {
+        updateStep(6);
+
+        let response = generateResponse(input, topChunks);
+
+        addMsg(response.text, "bot");
+
+        addMsg(
+            "🔎 Retrieved Chunks:\n" +
+            topChunks.map(c => c.text).join("\n---\n"),
+            "bot"
+        );
+    }, 800);
 }
 
-function buildDB(){
-
-  setStep(2);
-
-  let text=document.getElementById("context").value;
-  let size=parseInt(document.getElementById("chunkSize").value);
-
-  let chunks=chunk(text,size);
-
-  db=chunks.map((c,i)=>({
-    id:i+1,
-    text:c,
-    vec:embed(c)
-  }));
-
-  ready=true;
-
-  setStep(3);
-
-  addRight(`
-    <div class="card">
-      <b>Vector Knowledge Base Generated</b>
-      <div style="color:var(--muted);font-size:12px;margin-top:6px;">
-        Context converted into embeddings and stored in vector DB.
-      </div>
-      <div class="chunk">
-        Total chunks: ${db.length}
-      </div>
-    </div>
-  `);
+function generateResponse(query, chunks) {
+    return {
+        text: "Based on your context, here is a simulated RAG answer to: " + query
+    };
 }
 
-function runQuery(){
-
-  if(!ready){
-    alert("Generate Vector DB first");
-    return;
-  }
-
-  setStep(4);
-
-  let q=document.getElementById("query").value;
-  let qv=embed(q);
-
-  addChat("user",q);
-
-  let scored=db.map(d=>({
-    ...d,
-    score: similarity(qv,d.vec)
-  })).sort((a,b)=>b.score-a.score).slice(0,2);
-
-  setStep(5);
-
-  let ctx=scored.map(s=>s.text).join("\n\n");
-
-  setStep(6);
-
-  addRight(`
-    <div class="card">
-      <b>Retrieved Context</b>
-      ${scored.map(s=>`
-        <div class="chunk">
-          Chunk ${s.id} (score ${s.score})<br>
-          ${s.text}
-        </div>
-      `).join("")}
-    </div>
-  `);
-
-  addChat("system",
-`Prompt Augmented:
-User query + retrieved context combined before LLM call.
-`);
-
-  addChat("system",
-`YOUR RESPONSE
-
-Based on retrieved context, semantic search converts text into embeddings and compares vector similarity to retrieve relevant chunks. These chunks are injected into the prompt so the LLM generates grounded responses instead of hallucinations.
-`);
+function addMsg(text, type) {
+    let div = document.createElement("div");
+    div.className = "msg " + type;
+    div.innerText = text;
+    document.getElementById("chatBox").appendChild(div);
 }
-
-function similarity(a,b){
-  let s=0;
-  for(let i=0;i<a.length;i++){
-    s+=1-Math.abs(a[i]-b[i]);
-  }
-  return s.toFixed(2);
-}
-
-function addChat(type,text){
-  let div=document.createElement("div");
-  div.className="msg "+type;
-  div.innerText=text;
-  document.getElementById("chat").appendChild(div);
-}
-
-function addRight(html){
-  document.getElementById("rightPanel").innerHTML += html;
-}
-
 </script>
 
 </body>
